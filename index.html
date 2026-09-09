@@ -27,6 +27,13 @@
 // Po prvom otvorení sa celá aplikácia uloží do zariadenia a beží aj bez internetu.
 if ('serviceWorker' in navigator) {
   addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+  // Nová verzia prevezme kartu (skipWaiting + claim) — otvorená appka by potom
+  // miešala staré a nové moduly. Preto sa raz načíta znova.
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (reloaded || !navigator.serviceWorker.controller) return;
+    reloaded = true; location.reload();
+  });
 }
 </script>
 </body>
