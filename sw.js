@@ -3,7 +3,7 @@
 // v čakárni pred skúškou. Skripty a dáta sú na Supabase, shell na GitHub Pages,
 // takže sa cachujú obe domény.
 
-const VERSION = 'zbrojak-98f29f29';
+const VERSION = 'zbrojak-98f29f29-b';
 const B = 'https://wjgbffhasgwbqecfarst.supabase.co/storage/v1/object/public/zbrojak/';
 
 const SHELL = [
@@ -484,16 +484,46 @@ const HEAVY = [
   B + 'src/weapon/3d/sound.js',
 ];
 
+/**
+ * Zásoba sa naberá po dávkach, nie naraz.
+ *
+ * Aplikácia je rozdelená na stovky malých modulov — to je zámer, lebo sa tak
+ * dá meniť jedna vec bez dotyku ostatných. Úložisko však odmietne stovky
+ * súčasných požiadaviek (HTTP 429), preto sa sťahuje po skupinách a pri
+ * odmietnutí sa počká a skúsi znova.
+ */
+const BATCH = 6;
+const PAUSE = 90;
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+async function take(cache, url, tries = 3) {
+  for (let i = 0; i < tries; i++) {
+    try {
+      const r = await fetch(new Request(url, { cache: 'reload' }));
+      if (r && r.ok) { await cache.put(url, r.clone()); return true; }
+      if (r && r.status === 429) { await sleep(400 * (i + 1)); continue; }
+      return false;
+    } catch {
+      await sleep(200 * (i + 1));
+    }
+  }
+  return false;
+}
+
+async function fill(cache, list, { batch = BATCH, pause = PAUSE } = {}) {
+  for (let i = 0; i < list.length; i += batch) {
+    await Promise.all(list.slice(i, i + batch).map(u => take(cache, u)));
+    if (pause) await sleep(pause);
+  }
+}
+
 self.addEventListener('install', e => {
   e.waitUntil((async () => {
     const c = await caches.open(VERSION);
-    // cache: 'reload' obchádza HTTP cache prehliadača — inak by sa do offline zásoby
-    // dostala stará verzia vstupnej stránky
-    const fresh = u => new Request(u, { cache: 'reload' });
-    await Promise.all(SHELL.map(u => c.add(fresh(u)).catch(() => {})));
-    await Promise.all(ASSETS.map(u => c.add(fresh(u)).catch(() => {})));
-    // ťažké súbory dobehnú na pozadí; appka je použiteľná aj bez nich
-    Promise.all(HEAVY.map(u => c.add(fresh(u)).catch(() => {})));
+    await fill(c, SHELL, { batch: 3, pause: 0 });
+    await fill(c, ASSETS);
+    // ťažké súbory dobehnú na pozadí, pomalšie; appka je použiteľná aj bez nich
+    fill(c, HEAVY, { batch: 4, pause: 260 });
     self.skipWaiting();
   })());
 });
