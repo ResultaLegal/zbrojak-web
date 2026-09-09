@@ -3,7 +3,7 @@
 // v čakárni pred skúškou. Skripty a dáta sú na Supabase, shell na GitHub Pages,
 // takže sa cachujú obe domény.
 
-const VERSION = 'zbrojak-v5';
+const VERSION = 'zbrojak-v6';
 const B = 'https://wjgbffhasgwbqecfarst.supabase.co/storage/v1/object/public/zbrojak/';
 
 const SHELL = [
@@ -19,9 +19,7 @@ const ASSETS = [
   B + 'data/campaign.js',
   B + 'data/dilemmas.js',
   B + 'data/drills.js',
-  B + 'data/explain.js',
   B + 'data/facts.js',
-  B + 'data/law.js',
   B + 'data/medic.js',
   B + 'data/pathway.js',
   B + 'data/patrol.js',
@@ -34,6 +32,8 @@ const ASSETS = [
   B + 'data/scenarios.js',
   B + 'data/weapons.js',
   B + 'js/anatomy.js',
+  B + 'js/anatomy3d.js',
+  B + 'js/answerbox.js',
   B + 'js/app.js',
   B + 'js/audio.js',
   B + 'js/games/dilemma.js',
@@ -43,9 +43,15 @@ const ASSETS = [
   B + 'js/games/rangefire.js',
   B + 'js/games/sorter.js',
   B + 'js/games/vault.js',
+  B + 'js/grade.js',
   B + 'js/search.js',
   B + 'js/srs.js',
   B + 'js/store.js',
+  B + 'js/three/kit.js',
+  B + 'js/three/pistol.js',
+  B + 'js/three/revolver.js',
+  B + 'js/three/rifle.js',
+  B + 'js/three/viewer.js',
   B + 'js/ui.js',
   B + 'js/views/anatomyview.js',
   B + 'js/views/ask.js',
@@ -66,6 +72,15 @@ const ASSETS = [
   B + 'js/weapon.js'
 ];
 
+// Veľké súbory — model zbrane, znenia zákonov, rubriky a vysvetľovač.
+// Sťahujú sa až po inštalácii, aby prvé otvorenie nečakalo na dva megabajty.
+const HEAVY = [
+  B + 'data/explain.js',
+  B + 'data/law.js',
+  B + 'data/rubrics.js',
+  B + 'js/vendor/three.module.js'
+];
+
 self.addEventListener('install', e => {
   e.waitUntil((async () => {
     const c = await caches.open(VERSION);
@@ -74,6 +89,8 @@ self.addEventListener('install', e => {
     const fresh = u => new Request(u, { cache: 'reload' });
     await Promise.all(SHELL.map(u => c.add(fresh(u)).catch(() => {})));
     await Promise.all(ASSETS.map(u => c.add(fresh(u)).catch(() => {})));
+    // ťažké súbory dobehnú na pozadí; appka je použiteľná aj bez nich
+    Promise.all(HEAVY.map(u => c.add(fresh(u)).catch(() => {})));
     self.skipWaiting();
   })());
 });
