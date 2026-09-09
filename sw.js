@@ -3,7 +3,7 @@
 // v čakárni pred skúškou. Skripty a dáta sú na Supabase, shell na GitHub Pages,
 // takže sa cachujú obe domény.
 
-const VERSION = 'zbrojak-v3';
+const VERSION = 'zbrojak-v4';
 const B = 'https://wjgbffhasgwbqecfarst.supabase.co/storage/v1/object/public/zbrojak/';
 
 const SHELL = [
@@ -69,9 +69,11 @@ const ASSETS = [
 self.addEventListener('install', e => {
   e.waitUntil((async () => {
     const c = await caches.open(VERSION);
-    // shell musí prejsť, assety sa doťahujú po jednom, aby jeden výpadok nezhodil celú inštaláciu
-    await c.addAll(SHELL);
-    await Promise.all(ASSETS.map(u => c.add(u).catch(() => {})));
+    // cache: 'reload' obchádza HTTP cache prehliadača — inak by sa do offline zásoby
+    // dostala stará verzia vstupnej stránky
+    const fresh = u => new Request(u, { cache: 'reload' });
+    await Promise.all(SHELL.map(u => c.add(fresh(u)).catch(() => {})));
+    await Promise.all(ASSETS.map(u => c.add(fresh(u)).catch(() => {})));
     self.skipWaiting();
   })());
 });
@@ -93,24 +95,28 @@ self.addEventListener('fetch', e => {
 
   e.respondWith((async () => {
     const cache = await caches.open(VERSION);
+
+    // Vstupná stránka: najprv sieť, aby sa aktualizácia prejavila hneď;
+    // bez siete padáme na uloženú kópiu, takže appka naštartuje aj offline.
+    if (req.mode === 'navigate') {
+      try {
+        const r = await fetch(new Request(req.url, { cache: 'reload' }));
+        if (r && r.ok) { cache.put('./index.html', r.clone()); cache.put('./', r.clone()); }
+        return r;
+      } catch (err) {
+        return (await cache.match('./index.html')) || (await cache.match('./')) || Response.error();
+      }
+    }
+
+    // Skripty, štýly a dáta: najprv cache (appka naskočí okamžite), obnova na pozadí.
     const hit = await cache.match(req, { ignoreSearch: true });
-    // cache-first: appka je offline-first, aktualizácia beží na pozadí
     if (hit) {
       fetch(req).then(r => { if (r && r.ok) cache.put(req, r.clone()); }).catch(() => {});
       return hit;
     }
-    try {
-      const r = await fetch(req);
-      if (r && r.ok) cache.put(req, r.clone());
-      return r;
-    } catch (err) {
-      // navigácia bez siete a bez cache — aspoň vstupná stránka
-      if (req.mode === 'navigate') {
-        const shell = await cache.match('./index.html');
-        if (shell) return shell;
-      }
-      throw err;
-    }
+    const r = await fetch(req);
+    if (r && r.ok) cache.put(req, r.clone());
+    return r;
   })());
 });
 
