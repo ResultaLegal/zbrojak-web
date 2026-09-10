@@ -13,13 +13,80 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Zbroják">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23161c22'/%3E%3Cpath d='M16 5l8 4v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V9z' fill='none' stroke='%23d9a441' stroke-width='2'/%3E%3Ccircle cx='16' cy='15' r='3.2' fill='%23d9a441'/%3E%3C/svg%3E">
+<style>
+/* Kostra obrazovky priamo tu, aby bolo čo ukázať skôr, než dorazí balík.
+   Appka má vyše megabajtu; kým sa stiahne a rozbehne, videl by človek čiernu
+   plochu. Toto je presne ten kúsok štýlu, ktorý drží rám a značku — zvyšok
+   príde v css/app.css a tieto pravidlá prepíše. */
+:root { --bg:#0a0c0e; --ink:#e9eef3; --ink-3:#6b7885; --line-soft:#1f272e; --brass:#d9a441 }
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+  font:15px/1.55 "Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased}
+.app{position:relative;z-index:1;display:grid;grid-template-columns:240px minmax(0,1fr);min-height:100vh}
+.sidebar{border-right:1px solid var(--line-soft);
+  background:linear-gradient(180deg,#0e1316 0%,#0a0d10 100%);padding:18px 12px 24px;
+  position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;gap:3px}
+.main{min-width:0;padding:28px 32px 96px;max-width:1240px}
+
+/* Náhrada obsahu: tvary v miestach, kde o chvíľu bude naozajstný obsah.
+   Prehľadné pruhy sa jemne prelievajú, nech je vidieť, že sa niečo deje. */
+.kostra{padding:4px 8px 18px;display:flex;align-items:center;gap:11px}
+.kostra-znak{width:36px;height:36px;flex:0 0 36px;border-radius:10px;
+  background:linear-gradient(160deg,#2f3a45,#151b21);border:1px solid #3c4b58;
+  display:grid;place-items:center;color:var(--brass)}
+.kostra-meno{font-weight:800;letter-spacing:.2em;font-size:14px;text-transform:uppercase;color:#e0c07a}
+.kostra-pod{font-size:10.5px;color:var(--ink-3);letter-spacing:.06em;margin-top:-1px;white-space:nowrap}
+.kostra-pruh{height:12px;border-radius:6px;background:#131a20;margin:10px 10px 0;
+  animation:kostra-dych 1.4s ease-in-out infinite}
+.kostra-nadpis{height:30px;width:260px;border-radius:8px;background:#131a20;margin:6px 0 22px;
+  animation:kostra-dych 1.4s ease-in-out infinite}
+.kostra-karty{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+.kostra-karta{height:96px;border-radius:14px;background:#111820;border:1px solid var(--line-soft);
+  animation:kostra-dych 1.4s ease-in-out infinite}
+@keyframes kostra-dych{0%,100%{opacity:.5}50%{opacity:.85}}
+@media (max-width:900px){.app{grid-template-columns:1fr}
+  .sidebar{position:fixed;bottom:0;top:auto;left:0;right:0;height:auto;flex-direction:row;
+    overflow:hidden;border-right:0;border-top:1px solid #2b353f;
+    padding:6px 6px calc(6px + env(safe-area-inset-bottom));gap:2px;z-index:40;
+    background:rgba(11,15,18,.96)}
+  .main{padding:calc(16px + env(safe-area-inset-top)) 14px 100px}
+  .kostra{display:none}
+  .kostra-pruh{flex:1 1 0;height:40px;border-radius:9px;margin:0 2px}}
+@media (prefers-reduced-motion:reduce){.kostra-pruh,.kostra-nadpis,.kostra-karta{animation:none}}
+</style>
 <link rel="preconnect" href="https://wjgbffhasgwbqecfarst.supabase.co" crossorigin>
 <link rel="stylesheet" href="https://wjgbffhasgwbqecfarst.supabase.co/storage/v1/object/public/zbrojak/css/app.css">
 </head>
 <body>
 <div class="app">
-  <nav class="sidebar" id="nav"></nav>
-  <main class="main" id="view"></main>
+  <nav class="sidebar" id="nav">
+    <div class="kostra">
+      <div class="kostra-znak">
+        <svg width="19" height="19" viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M16 5l8 4v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V9z" fill="none" stroke="currentColor" stroke-width="2"/>
+          <circle cx="16" cy="15" r="3.2" fill="currentColor"/>
+        </svg>
+      </div>
+      <div>
+        <div class="kostra-meno">Zbroják</div>
+        <div class="kostra-pod">načítava sa…</div>
+      </div>
+    </div>
+    <div class="kostra-pruh" style="width:70%"></div>
+    <div class="kostra-pruh" style="width:55%"></div>
+    <div class="kostra-pruh" style="width:62%"></div>
+    <div class="kostra-pruh" style="width:48%"></div>
+  </nav>
+  <main class="main" id="view">
+    <div class="kostra-nadpis"></div>
+    <div class="kostra-karty">
+      <div class="kostra-karta"></div>
+      <div class="kostra-karta"></div>
+      <div class="kostra-karta"></div>
+      <div class="kostra-karta"></div>
+    </div>
+  </main>
 </div>
 <!-- Zdroj je rozdelený na stovky modulov; nasadzuje sa zlepený balík, lebo
      prehliadač si ich vypýta naraz a úložisko časť odmietne (HTTP 429). -->
