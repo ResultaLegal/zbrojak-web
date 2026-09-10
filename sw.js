@@ -3,7 +3,7 @@
 // v čakárni pred skúškou. Skripty a dáta sú na Supabase, shell na GitHub Pages,
 // takže sa cachujú obe domény.
 
-const VERSION = 'zbrojak-889d013d';
+const VERSION = 'zbrojak-15e4d2ad';
 const B = 'https://wjgbffhasgwbqecfarst.supabase.co/storage/v1/object/public/zbrojak/';
 
 const SHELL = [
