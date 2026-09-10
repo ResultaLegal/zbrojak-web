@@ -62,13 +62,24 @@ async function fill(cache, list, { batch = BATCH, pause = PAUSE } = {}) {
   }
 }
 
+/** Šetrí používateľ dáta, alebo je na pomalej sieti? */
+function setrneData() {
+  const c = self.navigator && self.navigator.connection;
+  if (!c) return false;
+  return !!c.saveData || c.effectiveType === '2g' || c.effectiveType === 'slow-2g';
+}
+
 self.addEventListener('install', e => {
   e.waitUntil((async () => {
     const c = await caches.open(VERSION);
     await fill(c, SHELL, { batch: 3, pause: 0 });
     await fill(c, ASSETS);
-    // ťažké súbory dobehnú na pozadí, pomalšie; appka je použiteľná aj bez nich
-    fill(c, HEAVY, { batch: 4, pause: 260 });
+    // Ťažké súbory (3D modely, dvadsať megabajtov) dobehnú na pozadí a pomaly;
+    // appka je použiteľná aj bez nich — zbraň je dovtedy kreslená kódom.
+    // Na meranom alebo pomalom pripojení sa nesťahujú vôbec: nikto nechce prísť
+    // o dáta za niečo, čo si nevypýtal. Kto Anatómiu naozaj otvorí, model si
+    // stiahne sám a service worker si ho pri tom uloží.
+    if (!setrneData()) fill(c, HEAVY, { batch: 4, pause: 260 });
     self.skipWaiting();
   })());
 });
