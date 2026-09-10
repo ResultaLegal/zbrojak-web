@@ -21,7 +21,9 @@
   <nav class="sidebar" id="nav"></nav>
   <main class="main" id="view"></main>
 </div>
-<script type="module" src="https://wjgbffhasgwbqecfarst.supabase.co/storage/v1/object/public/zbrojak/js/app.js"></script>
+<!-- Zdroj je rozdelený na stovky modulov; nasadzuje sa zlepený balík, lebo
+     prehliadač si ich vypýta naraz a úložisko časť odmietne (HTTP 429). -->
+<script defer src="https://wjgbffhasgwbqecfarst.supabase.co/storage/v1/object/public/zbrojak/dist/app.js"></script>
 <noscript><p style="padding:30px">Aplikácia potrebuje zapnutý JavaScript.</p></noscript>
 <script>
 // Po prvom otvorení sa celá aplikácia uloží do zariadenia a beží aj bez internetu.
