@@ -19,8 +19,9 @@ const ASSETS = [
   B + 'dist/app.js',
 ];
 
-// Veľké súbory — model zbrane, znenia zákonov, rubriky a vysvetľovač.
-// Sťahujú sa až po inštalácii, aby prvé otvorenie nečakalo na dva megabajty.
+// 3D modely zbraní — dvadsať megabajtov. Sťahujú sa až po inštalácii a pomaly;
+// zoznam prepisuje tools/gen_sw.py, tento komentár nie, tak nech hovorí pravdu:
+// zákony, rubriky ani vysvetľovač tu nie sú, tie sú medzi ASSETS.
 const HEAVY = [
   B + 'dist/models/357_python_revolver_riggedgame_ready.glb',
   B + 'dist/models/classic_m4.glb',
