@@ -3,7 +3,7 @@
 // v čakárni pred skúškou. Skripty a dáta sú na Supabase, shell na GitHub Pages,
 // takže sa cachujú obe domény.
 
-const VERSION = 'zbrojak-c3cc0462';
+const VERSION = 'zbrojak-666c4884';
 const B = 'https://wjgbffhasgwbqecfarst.supabase.co/storage/v1/object/public/zbrojak/';
 
 const SHELL = [
@@ -22,6 +22,11 @@ const ASSETS = [
 // Veľké súbory — model zbrane, znenia zákonov, rubriky a vysvetľovač.
 // Sťahujú sa až po inštalácii, aby prvé otvorenie nečakalo na dva megabajty.
 const HEAVY = [
+  B + 'dist/models/357_python_revolver_riggedgame_ready.glb',
+  B + 'dist/models/classic_m4.glb',
+  B + 'dist/models/g19_pistol_game_ready_free_version.glb',
+  B + 'dist/models/mauser_98_sporting.glb',
+  B + 'dist/models/remington_870_shotgun.glb',
 ];
 
 /**
