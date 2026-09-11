@@ -3,7 +3,7 @@
 // v čakárni pred skúškou. Skripty a dáta sú na Supabase, shell na GitHub Pages,
 // takže sa cachujú obe domény.
 
-const VERSION = 'zbrojak-15e4d2ad';
+const VERSION = 'zbrojak-9a8e11c5';
 const B = 'https://wjgbffhasgwbqecfarst.supabase.co/storage/v1/object/public/zbrojak/';
 
 const SHELL = [
@@ -17,6 +17,43 @@ const SHELL = [
 const ASSETS = [
   B + 'css/app.css',
   B + 'dist/app.js',
+  B + 'dist/parts/features-anatomyview.871a74a6.js',
+  B + 'dist/parts/features-ask.44dfe361.js',
+  B + 'dist/parts/features-bank.810c7ef5.js',
+  B + 'dist/parts/features-blitz.f8fec24a.js',
+  B + 'dist/parts/features-campaign.db4b319f.js',
+  B + 'dist/parts/features-cards.313e2984.js',
+  B + 'dist/parts/features-exam.8cff785c.js',
+  B + 'dist/parts/features-home.6e3fcbf0.js',
+  B + 'dist/parts/features-law.2932d8bf.js',
+  B + 'dist/parts/features-path.2e0c283f.js',
+  B + 'dist/parts/features-profile.931ea87a.js',
+  B + 'dist/parts/features-range.9bc0f42c.js',
+  B + 'dist/parts/features-stats.9064f6e7.js',
+  B + 'dist/parts/features-triage.ce5ce94b.js',
+  B + 'dist/parts/games-dilemma.372037e7.js',
+  B + 'dist/parts/games-fieldstrip.8fc9bbce.js',
+  B + 'dist/parts/games-medic.b88c96a4.js',
+  B + 'dist/parts/games-patrol.7384e81a.js',
+  B + 'dist/parts/games-rangefire.3d379fc1.js',
+  B + 'dist/parts/games-sorter.892eeaf6.js',
+  B + 'dist/parts/games-vault.b9515af0.js',
+  B + 'dist/parts/spolu-content-campaign.88baa74c.js',
+  B + 'dist/parts/spolu-content-law.12b2058a.js',
+  B + 'dist/parts/spolu-content-questions.facb96ad.js',
+  B + 'dist/parts/spolu-content-rubrics.f8c9c4ec.js',
+  B + 'dist/parts/spolu-features-simulator.87e8f711.js',
+  B + 'dist/parts/spolu-vendor-three-module.467cc586.js',
+  B + 'dist/parts/spolu-weapon-3d-core.4f4ef5ee.js',
+  B + 'dist/parts/spolu-weapon-3d-panel.fcda44cc.js',
+  B + 'dist/parts/spolu-weapon-3d.d12d4771.js',
+  B + 'dist/parts/weapon-3d-mesh-skin.ccc46cb0.js',
+  B + 'dist/parts/weapon-3d-models-auto.84ebad45.js',
+  B + 'dist/parts/weapon-3d-models-pistol.41ce97fd.js',
+  B + 'dist/parts/weapon-3d-models-revolver.bd98ded2.js',
+  B + 'dist/parts/weapon-3d-models-rifle.3324f310.js',
+  B + 'dist/parts/weapon-3d-models-shotgun.bc3e1ccb.js',
+  B + 'dist/parts/weapon-svg-schema.ed5cf54a.js',
 ];
 
 // 3D modely zbraní — dvadsať megabajtov. Sťahujú sa až po inštalácii a pomaly;
